@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Container, Row,Col,} from "react-bootstrap"
+import { Container, Row,Col,Spinner, Alert, } from "react-bootstrap"
 import { IArticle } from "../interfaces/IArticle"
 
 import SingleArticle from "./SingleArticle"
@@ -9,27 +9,34 @@ import SingleArticle from "./SingleArticle"
 const Article=()=>{
 
     const[news,setNews]=useState<IArticle[]>([])
+    const [isLoading,setiIsLoading]=useState(false)
+    const[isError, setIsError] = useState(false)
 
 
    
     
 
     const fetchNews=async()=>{
-        try{
 
+        try{
+            setiIsLoading(true)
+            
             let res= await fetch("https://api.spaceflightnewsapi.net/v3/articles")
             if(res.ok){
                 let newsfromapi=await res.json()
                 console.log(newsfromapi)
                 setNews(newsfromapi)
+                setiIsLoading(false)
             }
             else{
-                console.log("error")
+                setIsError(true)
+                setiIsLoading(false)
             }
 
         }
         catch(error){
-            console.log(error)
+            setIsError(true)
+            setiIsLoading(false)
         }
     }
 
@@ -39,14 +46,29 @@ const Article=()=>{
     },[])
 
     return(
-       <Container>
+       <Container >
+     
+        {isLoading && <Spinner animation="grow" variant="danger" />}
+        {isError && <Alert variant="danger">Something's wrong..</Alert>}
+
        
-            <Row className="justify-content-center mt-5">
+            <Row className="justify-content-center mt-5 ">
                 <Col>
-                <h2>Spaceflight News</h2>
+            
+
+
+
+              
+  <h1 >SPACEFLICHT NEWS</h1>
+
+
+
+
+
                 </Col>
             </Row>
-            <Row className="justify-content-center mt-5">
+            <Row className="justify-content-center mt-5 text-dark">
+                
            
                 {news.map(n=>(
                   

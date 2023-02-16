@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react"
 import {useParams} from "react-router-dom"
 import { IArticle } from "../interfaces/IArticle"
+import {Spinner} from "react-bootstrap"
 
 
-// import SingleDetails from "./SingleDetails"
+ import SingleDetails from "./SingleDetails"
 
 const Details=()=>{
 
 
-    const[single,setSingle]=useState<IArticle[]>([])
+
+    const[single,setSingle]=useState <null | IArticle> (null)
+    const [isLoading,setiIsLoading]=useState(false)
     const params=useParams()
  
     
@@ -16,21 +19,24 @@ const Details=()=>{
 
     const fetchSingleArticle=async()=>{
         try{
+            setiIsLoading(true)
             let res=await fetch("https://api.spaceflightnewsapi.net/v3/articles/"+params.id)
             if(res.ok){
                 let data= await res.json()
                 
                 setSingle(data)
-                console.log(single)
+                setiIsLoading(false)
                
             }
             else{
                 console.log("error")
+                setiIsLoading(false)
             }
 
         }
         catch(error){
             console.log(error)
+            setiIsLoading(false)
         }
 
       
@@ -45,20 +51,17 @@ const Details=()=>{
 
    
 
-console.log(single)
+
     return(
-        <h1>hello</h1>
+        <>
+       
 
-    //    single.length!==0 && (<h1>{single.title}</h1>)
-
-
-        //  <SingleDetails art={single}/>
-
-        // <h1>{single.title}</h1>
-        // <h1>{single.title}</h1>
-
+       {isLoading && <Spinner animation="grow" variant="danger" />}
+        {single &&  <SingleDetails art={single}/>}
+        {console.log(single)}
        
        
+        </>
 
     )
 
